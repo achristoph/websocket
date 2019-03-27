@@ -1,7 +1,9 @@
-<input (input)="sendMessage($event.target.value)" />
-<button (click)="closeConnection()">Close</button>
-<ul class="messages">
-  <li *ngFor="let msg of messages">
+<div style="margin: 15px;width:50vw;display:flex;">
+  <input class="form-control" (input)="sendMessage($event.target.value)" />
+  <button class="btn btn-primary" style="margin:0 10px" (click)="closeConnection()">Disconnect</button>
+</div>
+<ul class="list-group" style="margin: 15px">
+  <li class="list-group-item" *ngFor="let msg of messages">
     {{ msg }}
   </li>
 </ul>

@@ -1,12 +1,18 @@
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8181 });
+const clients = [];
 
+// server needs to keep track of client IP address
 wss.on('connection', function connection(ws) {
+  clients.push(ws);
   ws.isAlive = true;
   ws.on('pong', heartbeat);
 
   ws.on('message', function incoming(message) {
     console.log('received: %s', message);
+    for (const client of clients) {
+      client.send(message);
+    }
   });
 
   ws.on('close', function() {

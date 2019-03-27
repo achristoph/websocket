@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
     const url = 'ws://localhost:8181/';
     this.clientSocket = this.ws.connect(url);
     this.subscription = this.clientSocket.subscribe(m => {
+      console.log(m);
       this.messages = [...this.messages, m.data];
     });
   }
@@ -25,7 +26,7 @@ export class AppComponent implements OnInit {
     if (this.messages.length === this.MAX_MESSAGE) {
       this.messages.shift();
     }
-    this.messages = [...this.messages, m]; ////
+    // this.messages = [...this.messages, m];
   }
 
   closeConnection() {
