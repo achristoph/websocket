@@ -1,0 +1,7 @@
+<input (input)="sendMessage($event.target.value)" />
+<button (click)="closeConnection()">Close</button>
+<ul class="messages">
+  <li *ngFor="let msg of messages">
+    {{ msg }}
+  </li>
+</ul>
