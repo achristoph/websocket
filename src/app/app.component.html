@@ -1,9 +1,7 @@
-<div style="margin: 15px;width:50vw;display:flex;">
-  <input class="form-control" (input)="sendMessage($event.target.value)" />
-  <button class="btn btn-primary" style="margin:0 10px" (click)="closeConnection()">Disconnect</button>
+<div style="margin: 15px;width:50vw;">
+  <a routerLink="home" routerLinkActive="selected"> Home</a>
+  <a routerLink="detail" routerLinkActive="selected"> Details</a>
+  <div>
+    <router-outlet></router-outlet>
+  </div>
 </div>
-<ul class="list-group" style="margin: 15px">
-  <li class="list-group-item" *ngFor="let msg of messages">
-    {{ msg }}
-  </li>
-</ul>
