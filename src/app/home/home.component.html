@@ -1,4 +1,8 @@
-<input class="form-control" (keyup.enter)="sendMessage($event.target.value)" />
+<form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+  <input class="form-control" formControlName="name" />
+  <input class="form-control" (keyup.enter)="sendMessage($event.target.value)" />
+  <button type="submit" [disabled]="!messageForm.valid">Submit</button>
+</form>
 <button class="btn btn-primary" style="margin:0 10px" (click)="closeConnection()">Disconnect</button>
 <ul class="list-group" style="margin: 15px">
   <li class="list-group-item" *ngFor="let msg of messages">
