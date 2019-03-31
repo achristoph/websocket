@@ -1,31 +1,50 @@
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8181 });
-const clients = [];
-
 // server needs to keep track of client ID to maintain one connection per client
+const clients = {};
+const clientsI = {};
+const ReadyState = {
+  CONNECTING: 0, // Socket has been created. The connection is not yet open.
+  OPEN: 1, // The connection is open and ready to communicate.
+  CLOSING: 2, // The connection is in the process of closing.
+  CLOSED: 3 // The connection is closed or couldn't be opened.
+};
+
 wss.on('connection', function connection(ws) {
-  // trackClient(ws);
-  ws.on('message', function incoming(message) {
-    console.log(`Received: ${message}`);
-    message = message.replace(/['"]+/g, '');
-    if (message === 'x') {
-      let i = 0;
-      let interv = setInterval(() => {
-        if (i === 10) {
-          clearInterval(interv);
-          ws.send('Terminated');
-          ws.terminate();
-        } else {
+  console.log('connecting to a client');
+  ws.on('message', function incoming(payload) {
+    payload = JSON.parse(payload);
+    let client = clients[payload.user];
+    let i = clientsI[payload.user];
+
+    if (!client) {
+      trackClient(payload.user, ws);
+      client = ws;
+      i = 0;
+    }
+
+    console.log(`Received: ${payload.message}`);
+    let interv = setInterval(() => {
+      console.log(i);
+      if (i === 100) {
+        clearInterval(interv);
+        ws.send('Done');
+      } else {
+        if (ws.readyState === ReadyState.OPEN) {
           ws.send(i, function(e) {
-            // stop the interval if an error has occurred - a client reload/close the browser
+            // if (ws.readyState === 1) guards sending a message when socket is already closed
             if (e) {
+              // without the if guard above, we need to stop the interval if an error has occurred - a client reloads/closes the browser
+              console.log('asdfasdfasdf');
+              console.log(e);
               clearInterval(interv);
             }
           });
         }
-        i++;
-      }, 1000);
-    }
+      }
+      clientsI[payload.user] = i;
+      i++;
+    }, 1000);
   });
 
   ws.on('close', function(e) {
@@ -46,14 +65,14 @@ function heartbeat() {
   this.isAlive = true;
 }
 
-function trackClient(ws) {
-  clients.push(ws);
+function trackClient(user, ws) {
+  clients[user] = ws;
   ws.isAlive = true;
   ws.on('pong', heartbeat);
 }
 
-function broadcast() {
-  for (const client of clients) {
+function broadcast(message) {
+  for (const client of this.clients) {
     client.send(message);
   }
 }
